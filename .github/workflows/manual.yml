@@ -38,7 +38,7 @@ jobs:
           cd /var/www/myapp
           sudo python -m venv myenv
           source myenv/bin/activate
-          sudo pip install flask gunicorn
+          sudo pip install --ignore-installed flask gunicorn
 
       - name: Copy Flask App Files
         run: |
@@ -50,12 +50,12 @@ jobs:
 
       - name: Create Supervisor Configuration
         run: |
-          echo "[program:myapp]\ncommand=/bin/bash -c 'source /var/www/myapp/myenv/bin/activate; gunicorn -w 3 --bind unix:/var/www/myapp/ipc.sock wsgi:app'\ndirectory=/var/www/myapp\nuser=www-data\nau[...]
+          echo "[program:myapp]\ncommand=/bin/bash -c 'source /var/www/myapp/myenv/bin/activate; gunicorn -w 3 --bind unix:/var/www/myapp/ipc.sock wsgi:app'\ndirectory=/var/www/myapp\nuser=www-data\n[...]"
           sudo systemctl restart supervisor
 
       - name: Configure Nginx
         run: |
-          echo "server {\n    listen 80;\n    server_name app.example.com;\n\n    location / {\n        include proxy_params;\n        proxy_pass http://unix:/var/www/myapp/ipc.sock;\n    }\n}" | sudo t[...]
+          echo "server {\n    listen 80;\n    server_name app.example.com;\n\n    location / {\n        include proxy_params;\n        proxy_pass http://unix:/var/www/myapp/ipc.sock;\n    }\n}" | sudo [...]
           sudo systemctl restart nginx
 
       - name: Get Public IP
