@@ -1,0 +1,52 @@
+<!-- templates/index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>IP Information Finder</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body{
+            background-image: url('https://cdn.discordapp.com/attachments/1246159821644894218/1311251356396425266/logo_2.png?ex=6795f5fd&is=6794a47d&hm=ab174d2f22b332de4967e1af789f608c685b94de952bbc5dcea08183d9e5dc01&');
+            background-position:center;
+            background-repeat: no-repeat;
+            background-size: cover;
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+    <div class="flex flex-col items-center justify-center min-h-screen">
+        <div class="bg-white shadow-lg rounded-2xl p-6 text-center" style="background-color: rgba(255, 255, 255, 0.5);">
+            <h1 class="text-2xl font-bold mb-4">Get Your IP Information</h1>
+            <button id="fetchBtn" class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600">
+                Fetch IP Information
+            </button>
+            <div id="ipInfo" class="mt-4 text-lg text-gray-700"></div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('fetchBtn').addEventListener('click', async () => {
+            const ipInfoDiv = document.getElementById('ipInfo');
+            try {
+                const response = await fetch('/get_ip_info');
+                const data = await response.json();
+                
+                if (data.error) {
+                    ipInfoDiv.innerHTML = `<p class="text-red-500">${data.error}</p>`;
+                } else {
+                    ipInfoDiv.innerHTML = `
+                        <p><strong>IP Address:</strong> ${data.ip}</p>
+                        <p><strong>ISP:</strong> ${data.isp}</p>
+                        <p><strong>City:</strong> ${data.city}</p>
+                        <p><strong>Region:</strong> ${data.region}</p>
+                        <p><strong>Country:</strong> ${data.country}</p>
+                    `;
+                }
+            } catch (error) {
+                ipInfoDiv.innerHTML = '<p class="text-red-500">Error fetching IP information</p>';
+            }
+        });
+    </script>
+</body>
+</html>
