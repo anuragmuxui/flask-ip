@@ -33,14 +33,14 @@ jobs:
 
       - name: Create and Activate Virtual Environment
         run: |
-          cd /var/www/myapp
-          python -m venv myenv
-          source myenv/bin/activate
-          pip install flask gunicorn
+          sudo cd /var/www/myapp
+          sudo python -m venv myenv
+          sudo source myenv/bin/activate
+          sudo pip install flask gunicorn
 
       - name: Copy Flask App Files
         run: |
-          cp -r ./* /var/www/myapp/
+          sudo cp -r ./* /var/www/myapp/
       - name: Create WSGI File
         run: |
             echo "from app import app\n\nif __name__ == '__main__':\n    app.run(debug=True)" > /var/www/myapp/wsgi.py
