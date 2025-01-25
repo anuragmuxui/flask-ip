@@ -1,7 +1,6 @@
 from flask import Flask, render_template, jsonify, request
 import requests
 from flask_cors import CORS
-import os
 
 app = Flask(__name__)
 CORS(app)
@@ -13,9 +12,8 @@ def index():
 @app.route('/get_ip_info')
 def get_ip_info():
     try:
-        # Fetch the public IP address of the client
-        ip_response = requests.get('https://api.ipify.org?format=json')
-        user_ip = ip_response.json().get('ip')
+        # Fetch the client's IP address from the request object
+        user_ip = request.remote_addr
         
         # Fetch IP information from ipwho.is
         response = requests.get(f'http://ipwho.is/{user_ip}?output=json')
@@ -29,5 +27,6 @@ def get_ip_info():
         })
     except Exception as e:
         return jsonify({'error': 'Unable to fetch IP information'}), 500
+
 if __name__ == "__main__":
     app.run(debug=False)
