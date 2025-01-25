@@ -32,7 +32,7 @@ jobs:
         sudo apt-get update
         sudo apt-get install -y nginx
         sudo rm /etc/nginx/sites-enabled/default
-        echo "server {
+        echo 'server {
           listen 80;
           server_name _;
           
@@ -40,7 +40,7 @@ jobs:
             include proxy_params;
             proxy_pass http://unix:/var/www/myapp/ipc.sock;
           }
-        }" | sudo tee /etc/nginx/sites-available/myapp
+        }' | sudo tee /etc/nginx/sites-available/myapp
         sudo ln -s /etc/nginx/sites-available/myapp /etc/nginx/sites-enabled
         sudo nginx -t && sudo systemctl restart nginx
 
