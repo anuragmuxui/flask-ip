@@ -31,7 +31,7 @@ jobs:
       - name: Create Application Directory
         run: |
           sudo mkdir -p /var/www/myapp
-          sudo chown -R www-data:www-data /var/www/myapp
+          sudo chown -R $USER:$USER /var/www/myapp
 
       - name: Create and Activate Virtual Environment
         run: |
@@ -46,26 +46,26 @@ jobs:
 
       - name: Create WSGI File
         run: |
-          sudo echo "from app import app\n\nif __name__ == '__main__':\n    app.run(debug=True)" > /var/www/myapp/wsgi.py
+          echo "from app import app\n\nif __name__ == '__main__':\n    app.run(debug=True)" > /var/www/myapp/wsgi.py
 
       - name: Create Supervisor Configuration
         run: |
-          sudo echo "[program:myapp]\ncommand=/bin/bash -c 'source /var/www/myapp/myenv/bin/activate; gunicorn -w 3 --bind unix:/var/www/myapp/ipc.sock wsgi:app'\ndirectory=/var/www/myapp\nuser=www-data\n[...]"
+          echo "[program:myapp]\ncommand=/bin/bash -c 'source /var/www/myapp/myenv/bin/activate; gunicorn -w 3 --bind unix:/var/www/myapp/ipc.sock wsgi:app'\ndirectory=/var/www/myapp\nuser=www-data\n[...]"
           sudo systemctl restart supervisor
 
       - name: Configure Nginx
         run: |
-          sudo echo "server {\n    listen 80;\n    server_name app.example.com;\n\n    location / {\n        include proxy_params;\n        proxy_pass http://unix:/var/www/myapp/ipc.sock;\n    }\n}" | sudo [...]
+          echo "server {\n    listen 80;\n    server_name app.example.com;\n\n    location / {\n        include proxy_params;\n        proxy_pass http://unix:/var/www/myapp/ipc.sock;\n    }\n}" | sudo [...]
           sudo systemctl restart nginx
 
       - name: Get Public IP
         id: get_ip
         run: |
-          sudo echo "PUBLIC_IP=$(curl -s ifconfig.me)" >> $GITHUB_OUTPUT
+          echo "PUBLIC_IP=$(curl -s ifconfig.me)" >> $GITHUB_OUTPUT
 
       - name: Print Public IP and Port
         run: |
-          sudo echo "Flask App deployed at http://${{ steps.get_ip.outputs.PUBLIC_IP }}"
+          echo "Flask App deployed at http://${{ steps.get_ip.outputs.PUBLIC_IP }}"
 
       - name: Keep Server Running
         run: sleep 5h
