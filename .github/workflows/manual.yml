@@ -46,7 +46,7 @@ jobs:
 
       - name: Create WSGI File
         run: |
-          echo "from app import app\n\nif __name__ == '__main__':\n    app.run(debug=True)" > /var/www/myapp/wsgi.py
+          echo "from app import app\n\nif __name__ == '__main__':\n    app.run(debug=True)" | sudo tee /var/www/myapp/wsgi.py
 
       - name: Create Supervisor Configuration
         run: |
@@ -55,7 +55,8 @@ jobs:
 
       - name: Configure Nginx
         run: |
-          echo "server {\n    listen 80;\n    server_name app.example.com;\n\n    location / {\n        include proxy_params;\n        proxy_pass http://unix:/var/www/myapp/ipc.sock;\n    }\n}" | sudo [...]
+          echo "server {\n    listen 80;\n    server_name app.example.com;\n\n    location / {\n        include proxy_params;\n        proxy_pass http://unix:/var/www/myapp/ipc.sock;\n    }\n}" | sudo tee /etc/nginx/sites-available/myapp
+          sudo ln -s /etc/nginx/sites-available/myapp /etc/nginx/sites-enabled/
           sudo systemctl restart nginx
 
       - name: Get Public IP
