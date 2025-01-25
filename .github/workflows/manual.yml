@@ -55,4 +55,3 @@ jobs:
 
       - name: Print ngrok url
         run: echo "The public url: ${{ steps.run_ngrok.outputs.ngrok_url }}"
-
