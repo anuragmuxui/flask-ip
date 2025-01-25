@@ -1,0 +1,52 @@
+name: Deploy Flask with Nginx
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.x'
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+
+    - name: Run Flask
+      run: |
+        nohup gunicorn --bind 0.0.0.0:5000 wsgi:app &
+
+    - name: Set up Nginx
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y nginx
+        sudo rm /etc/nginx/sites-enabled/default
+        echo "server {
+          listen 80;
+          server_name _;
+
+          location / {
+            proxy_pass http://127.0.0.1:5000;
+            proxy_set_header Host $host;
+            proxy_set_header X-Real-IP $remote_addr;
+            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+            proxy_set_header X-Forwarded-Proto $scheme;
+          }
+        }" | sudo tee /etc/nginx/sites-available/flask
+        sudo ln -s /etc/nginx/sites-available/flask /etc/nginx/sites-enabled
+        sudo systemctl restart nginx
+
+    - name: Print IP and Port
+      run: |
+        echo "App is deployed on IP: $(curl -s ifconfig.me) and Port: 80"
