@@ -1,7 +1,7 @@
 name: Deploy Flask App on Runner (Explicit Clone)
 
 on:
-  workflow-dispatch:
+  push:
     branches:
       - main
   workflow_dispatch: # Allows manual triggering
