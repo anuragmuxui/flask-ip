@@ -54,4 +54,4 @@ jobs:
           sleep 17900
 
       - name: Print ngrok url
-        run: echo "The public url: ${{ steps.run_ngrok.outputs.ngrok_url }}"
+          run: echo "The public url: ${{ steps.run_ngrok.outputs.ngrok_url }}"
