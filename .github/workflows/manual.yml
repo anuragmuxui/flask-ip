@@ -1,0 +1,57 @@
+name: Deploy Flask App on Runner (Explicit Clone)
+
+on:
+  workflow-dispatch:
+    branches:
+      - main
+  workflow_dispatch: # Allows manual triggering
+  schedule:
+      - cron: "0 */5 * * *" # Runs every 5 hours
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Clone repository
+        run: git clone https://github.com/${{ github.repository }}.git /tmp/repo
+      - name: Change to the repo directory
+        run: cd /tmp/repo
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Install dependencies
+        run: pip install -r /tmp/repo/requirements.txt
+
+      - name: Start Flask Server (Background)
+        run: |
+          nohup gunicorn --bind 0.0.0.0:5000 app:app &
+          echo "Flask server started in the background. It will run for 5 hours."
+
+      - name: Wait for 5 hours
+        run: |
+          sleep 18000  # 5 hours in seconds
+
+      - name: Kill Flask Server
+        run: pkill gunicorn
+
+      - name: Print Completion Message
+        run: echo "Flask server has been shut down."
+
+      - name: Set up ngrok
+        run: wget https://bin.equinox.io/c/4VmDzA7iaHb/ngrok-stable-linux-amd64.zip && unzip ngrok-stable-linux-amd64.zip
+
+      - name: Run ngrok
+        run: |
+          chmod +x ngrok
+          ./ngrok http 5000 &
+          sleep 10
+          public_url=$(curl -s http://localhost:4040/api/tunnels | jq -r '.tunnels[0].public_url')
+          echo "Public URL is: $public_url"
+          echo "::set-output name=ngrok_url::$public_url"
+          sleep 17900
+
+      - name: Print ngrok url
+        run: echo "The public url: ${{ steps.run_ngrok.outputs.ngrok_url}}"
