@@ -35,7 +35,7 @@ jobs:
         run: |
           cd /var/www/myapp
           sudo python -m venv myenv
-          sudo source myenv/bin/activate
+          source myenv/bin/activate
           sudo pip install flask gunicorn
 
       - name: Copy Flask App Files
