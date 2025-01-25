@@ -33,7 +33,7 @@ jobs:
 
       - name: Create and Activate Virtual Environment
         run: |
-          sudo cd /var/www/myapp
+          cd /var/www/myapp
           sudo python -m venv myenv
           sudo source myenv/bin/activate
           sudo pip install flask gunicorn
