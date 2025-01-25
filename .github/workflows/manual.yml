@@ -49,7 +49,6 @@ jobs:
         run: |
           echo "[program:myapp]\ncommand=/bin/bash -c 'source /var/www/myapp/myenv/bin/activate; gunicorn -w 3 --bind unix:/var/www/myapp/ipc.sock wsgi:app'\ndirectory=/var/www/myapp\nuser=www-data\ngroup=www-data\nautostart=true\nautorestart=true\nstdout_logfile=/var/www/myapp/myapp.log\nstderr_logfile=/var/www/myapp/error.log" | sudo tee /etc/supervisor/conf.d/myapp.conf
           sudo systemctl restart supervisor
-
       - name: Configure Nginx
         run: |
           echo "server {\n    listen 80;\n    server_name app.example.com;\n\n    location / {\n        include proxy_params;\n        proxy_pass http://unix:/var/www/myapp/ipc.sock;\n    }\n}" | sudo tee /etc/nginx/conf.d/myapp.conf
