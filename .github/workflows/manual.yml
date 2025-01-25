@@ -1,13 +1,3 @@
-It seems I couldn't retrieve the job logs for the specific workflow run.
-
-Let's update the workflow configuration to address the Nginx service failure:
-
-    Ensure the Nginx configuration is correctly formatted and valid.
-    Test the Nginx configuration before restarting the service.
-
-Here is the updated workflow configuration:
-YAML
-
 name: Deploy Flask App with Nginx
 
 on:
